@@ -7,7 +7,7 @@ from growbox import Growbox, Lamp, Fan, Pot
 from threading import Thread
 import numpy as np
 from picamera import PiCamera
-from users import Users
+from my_user import Users
 
 ###################################################################
 # LOGIN 
