@@ -1,7 +1,7 @@
 # Build and Release Folders
 *.png
 *.jpg
-users.py
+my_user.py
 data/
 
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
