@@ -6,6 +6,7 @@ from log_data import Logger
 from sensors import Sensor
 import json as js
 import RPi.GPIO as GPIO
+import json
 GPIO.setmode(GPIO.BCM)
 
 
@@ -15,8 +16,12 @@ class Growbox():
     Sensor()
     data_logger = Logger('data')
     error_logger = Logger('error_growbox')
+    preferences_logger = Logger('preferences')
+    preferences = preferences_logger.get_last()
+    # print(preferences)
     log_interval = timedelta(minutes=2)
     last_log = datetime.now()-log_interval
+
 
     def __init__(self, pin, id):
         self.pin = pin
@@ -34,6 +39,12 @@ class Growbox():
     def toggle_state(self):
         self.state = not self.set_state
 
+    @classmethod
+    def safe_preferences(cls):
+        print('saving preferences')
+        cls.preferences_logger.write(js.dumps(cls.build_data()))
+
+    
     @classmethod
     def path_data(cls):
         return cls.data_logger.get_path()
@@ -161,6 +172,7 @@ class Lamp(Growbox):
     @classmethod
     def set_phase(cls, phase):
         cls.phase = phase
+        cls.safe_preferences()
                 
     @classmethod
     def update_lamps(cls):
@@ -171,11 +183,13 @@ class Lamp(Growbox):
     @classmethod
     def set_phase(cls, phase):
         cls.phase = phase # 'g' or ''f'
+        cls.safe_preferences()
 
     @classmethod
     def set_starttime(cls, starttime):
         _dt = datetime.strptime(starttime, "%H:%M")
         cls.on_time = timedelta(hours=_dt.hour, minutes=_dt.minute)
+        cls.safe_preferences()
 
 
 class Pot(Growbox):
@@ -247,18 +261,22 @@ class Pot(Growbox):
     @classmethod
     def set_irrigation_interval(cls, irrigation_interval): # in hours
         cls.irrigation_interval = int(irrigation_interval)
+        cls.safe_preferences()
 
     @classmethod
     def set_irrigation_duration(cls, irrigation_duration): # in seconds
         cls.irrigation_duration = int(irrigation_duration)
+        cls.safe_preferences()
 
     @classmethod
     def set_soil_moist_hyst_min(cls, soil_moist_hyst_min): 
         cls.soil_moist_hyst_min = int(soil_moist_hyst_min)
+        cls.safe_preferences()
     
     @classmethod
     def set_soil_moist_hyst_max(cls, soil_moist_hyst_max): 
         cls.soil_moist_hyst_max = int(soil_moist_hyst_max)
+        cls.safe_preferences()
 
 
 
@@ -313,24 +331,29 @@ class Fan(Growbox):
     @classmethod
     def set_temp_hyst_min(cls, temp_hyst_min): 
         cls.temp_hyst_min = int(temp_hyst_min)
+        cls.safe_preferences()
 
     @classmethod
     def set_temp_hyst_max(cls, temp_hyst_max): 
         cls.temp_hyst_max = int(temp_hyst_max)
+        cls.safe_preferences()
 
     @classmethod
     def set_hum_hyst_min(cls, hum_hyst_min): 
         cls.hum_hyst_min = int(hum_hyst_min)
+        cls.safe_preferences()
 
     @classmethod
     def set_hum_hyst_max(cls, hum_hyst_max): 
         cls.hum_hyst_max = int(hum_hyst_max)
+        cls.safe_preferences()
 
  
 
 if __name__=='__main__':
 
     Growbox.init_actuators()
+    Growbox.safe_preferences()
     Growbox.main_loop()
     
 
