@@ -1,25 +1,26 @@
 import numpy as np
 from time import time, sleep
-import board
-# from adafruit_bme280 import basic as adafruit_bme280
+import bme280
 
 class Sensor():
+    my_bme280 = bme280
+
     def __init__(self):
-        i2c = board.I2C()   # uses board.SCL and board.SDA
-        # Sensor.bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c, 0x76)
+        pass
 
     @classmethod
     def get_data(cls):
         flag = True
         while flag:
-            try:
+            try:  
+                    temperature,pressure,humidity = cls.my_bme280.readBME280All()
                     _sensordata = {}
-                    _sensordata['temp'] = 20# round(cls.bme280.temperature,2)
-                    _sensordata['hum'] =  50 # round(cls.bme280.relative_humidity,2)
-                    _sensordata['soil1'] =  round(abs(np.sin(time())),2)
+                    _sensordata['temp'] = temperature
+                    _sensordata['hum'] =  round(abs(np.sin(time())),2)
+                    _sensordata['soil1'] =  humidity*100
                     _sensordata['soil2']= round(abs(np.sin(time())),2)
                     _sensordata['soil3']= round(abs(np.sin(time())),2)
-                    _sensordata['pres'] = 1009 #round(cls.bme280.pressure,2)
+                    _sensordata['pres'] = pressure
                     flag = False
             except:
                 print('waiting for sensor...')
