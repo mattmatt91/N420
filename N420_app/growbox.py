@@ -62,11 +62,11 @@ class Growbox():
     def init_actuators(cls):
         print('init growbox')
         Growbox.update_sensordata()
-        Lamp(17, 'lamp_g', 18 , growth_phase='g')
-        Lamp(27, 'lamp_f', 12, growth_phase='f')
-        Pot(22, 'pot1', 24, 'soil1')
-        Pot(18, 'pot2', 24, 'soil2')
-        Fan(23, 'fan')
+        Lamp(24, 'lamp_g', 18 , growth_phase='g')
+        Lamp(23, 'lamp_f', 12, growth_phase='f')
+        Pot(17, 'pot1', 27, 'soil1')
+        Pot(22, 'pot2', 27, 'soil2')
+        Fan(18, 'fan')
         
         cls.update_sensordata()
         Lamp.update_lamps()
