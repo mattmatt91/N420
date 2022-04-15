@@ -197,7 +197,7 @@ class Pot(Growbox):
     state_pump= False
     pots = []
     irrigation_interval = 80 # hours
-    irrigation_duration = 2 # in seconds
+    irrigation_duration = 10 # in seconds
     soil_moist_hyst_min = 10
     soil_moist_hyst_max = 20
 
