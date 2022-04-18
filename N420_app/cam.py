@@ -18,6 +18,7 @@ class Cam(BaseCamera):
     capture_interval = timedelta(minutes=20)
     last_capture = datetime.now()- capture_interval
     path =os.path.join("data" ,"pictures")
+    Path(path).mkdir(parents=True, exist_ok=True)
     
     data = np.empty((cam_res[0],cam_res[1],3),dtype=np.uint8)
 
@@ -55,12 +56,10 @@ class Cam(BaseCamera):
                 stream.truncate()
 
         
-    @staticmethod   
-    def safe_frame(camera):
-        path = Cam.path
-        Path("data\\pictures").mkdir(parents=True, exist_ok=True)
+    @classmethod  
+    def safe_frame(cls,camera):
         name = datetime.now().strftime("%m-%d-%Y_%H-%M-%S") + ".png"
-        path = os.path.join(path, name)
+        path = os.path.join(cls.path, name)
         print(path)
         camera.capture(path)
 

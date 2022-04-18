@@ -111,10 +111,9 @@ def preferences():
         return redirect(url_for('login'))
     data = Growbox.build_data()
     if request.method == "POST":   
-            print(dict(request.form))    
             for i in request.form:
-                print(functions[i])
                 functions[i](request.form[i])
+            Growbox.safe_preferences()
     
     return render_template('preferences.html', data=data)
     # return render_template('test.html')

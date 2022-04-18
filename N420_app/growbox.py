@@ -1,8 +1,7 @@
 
 from datetime import datetime, timedelta
 from time import sleep, time
-from N420_app.log_data import Preferences
-from log_data import Logger
+from log_data import Logger,Preferences
 
 from sensors import Sensor
 import json as js
@@ -40,8 +39,8 @@ class Growbox():
 
     @classmethod
     def safe_preferences(cls):
-        print('saving preferences')
-        cls.preferences.write(js.dumps(cls.build_data()))
+        print(cls.preferences)
+        cls.preferences_logger.write(cls.build_data())
 
     
     @classmethod
@@ -64,8 +63,8 @@ class Growbox():
         Growbox.update_sensordata()
         Lamp(24, 'lamp_g', 18 , growth_phase='g')
         Lamp(23, 'lamp_f', 12, growth_phase='f')
-        Pot(17, 'pot1', 27, 'soil1')
-        Pot(22, 'pot2', 27, 'soil2')
+        Pot(22, 'pot1', 27, 'soil1')
+        Pot(17, 'pot2', 27, 'soil2')
         Fan(18, 'fan')
         
         cls.update_sensordata()
@@ -115,7 +114,8 @@ class Lamp(Growbox):
     lamps = []
     phase =  Growbox.preferences['lamp_phase']
     lamp_state = False
-    on_time = timedelta(hours=Growbox.preferences['lamp_ontime']) 
+    on_time = timedelta(hours=int(Growbox.preferences['lamp_ontime'].split(':')[0]),
+                     minutes=int(Growbox.preferences['lamp_ontime'].split(':')[1])) 
    
     def __init__(self, pin, id, duration, growth_phase='g'):
         super().__init__(pin, id)
@@ -171,7 +171,7 @@ class Lamp(Growbox):
     @classmethod
     def set_phase(cls, phase):
         cls.phase = phase
-        cls.safe_preferences()
+        
                 
     @classmethod
     def update_lamps(cls):
@@ -182,13 +182,13 @@ class Lamp(Growbox):
     @classmethod
     def set_phase(cls, phase):
         cls.phase = phase # 'g' or ''f'
-        cls.safe_preferences()
+        
 
     @classmethod
     def set_starttime(cls, starttime):
         _dt = datetime.strptime(starttime, "%H:%M")
         cls.on_time = timedelta(hours=_dt.hour, minutes=_dt.minute)
-        cls.safe_preferences()
+        
 
 
 class Pot(Growbox):
@@ -206,7 +206,7 @@ class Pot(Growbox):
         Pot.pots.append(self)
         self. index_soil = index_soil # index for dict form sensordate (available: "soil1", "soil2", "siol3")
         self.flag_dry = False
-        self.last_irrigation = datetime.now()-timedelta(hours=Pot.irrigation_interval)+ timedelta(seconds=5)
+        self.last_irrigation = datetime.now()-timedelta(hours=Pot.irrigation_interval)+ timedelta(seconds=15)
         GPIO.setup(pin_pump, GPIO.OUT)
         GPIO.output(self.pin, True)
 
@@ -260,22 +260,18 @@ class Pot(Growbox):
     @classmethod
     def set_irrigation_interval(cls, irrigation_interval): # in hours
         cls.irrigation_interval = int(irrigation_interval)
-        cls.safe_preferences()
 
     @classmethod
     def set_irrigation_duration(cls, irrigation_duration): # in seconds
         cls.irrigation_duration = int(irrigation_duration)
-        cls.safe_preferences()
 
     @classmethod
     def set_soil_moist_hyst_min(cls, soil_moist_hyst_min): 
         cls.soil_moist_hyst_min = int(soil_moist_hyst_min)
-        cls.safe_preferences()
     
     @classmethod
     def set_soil_moist_hyst_max(cls, soil_moist_hyst_max): 
         cls.soil_moist_hyst_max = int(soil_moist_hyst_max)
-        cls.safe_preferences()
 
 
 
@@ -284,7 +280,7 @@ class Fan(Growbox):
 
     fans=[]
     temp_hyst_min = Growbox.preferences['temp_hyst_min']
-    temp_hyst_max = Growbox.preferences['temp_hyst_min']
+    temp_hyst_max = Growbox.preferences['temp_hyst_max']
     hum_hyst_min = Growbox.preferences['hum_hyst_min']
     hum_hyst_max = Growbox.preferences['hum_hyst_max']
     fans_state = False
@@ -330,22 +326,18 @@ class Fan(Growbox):
     @classmethod
     def set_temp_hyst_min(cls, temp_hyst_min): 
         cls.temp_hyst_min = int(temp_hyst_min)
-        cls.safe_preferences()
 
     @classmethod
     def set_temp_hyst_max(cls, temp_hyst_max): 
         cls.temp_hyst_max = int(temp_hyst_max)
-        cls.safe_preferences()
 
     @classmethod
     def set_hum_hyst_min(cls, hum_hyst_min): 
         cls.hum_hyst_min = int(hum_hyst_min)
-        cls.safe_preferences()
 
     @classmethod
     def set_hum_hyst_max(cls, hum_hyst_max): 
         cls.hum_hyst_max = int(hum_hyst_max)
-        cls.safe_preferences()
 
  
 

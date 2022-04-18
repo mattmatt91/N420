@@ -27,7 +27,7 @@ class Preferences():
     def __init__(self):
             self.path =os.path.join("data" ,"logs")
             Path(self.path).mkdir(parents=True, exist_ok=True)  
-            self.path =os.path.join(self.path, "preferemces.json")
+            self.path =os.path.join(self.path, "preferences.json")
             with open(self.path) as json_file:
                 self.data = js.load(json_file)
 
@@ -38,7 +38,7 @@ class Preferences():
 
     def write(self, data):
         for i in data:
-            print(i, data[i])
+            print(i)
             self.data[i] = data[i]
         with open(self.path, 'w') as outfile:
             js.dump(self.data, outfile)
