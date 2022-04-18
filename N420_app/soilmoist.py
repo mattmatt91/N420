@@ -7,16 +7,17 @@ from threading import Thread
 class SoilMoist():
 
     GPIO.setmode(GPIO.BCM)
-    sample_cycle = 1
+    sample_cycle = 3
     sensors = []
 
 
     def __init__(self, pin, name):
         print('starting soilmoist sensor...')
-        GPIO.setup(pin, GPIO.IN)
+        GPIO.setup(pin, GPIO.IN,GPIO.PUD_UP)
         self.pin = pin
         self.counts = 0
         self.name = name
+        self.flag = False
         SoilMoist.sensors.append(self)
 
         self.start_loop()
@@ -25,13 +26,19 @@ class SoilMoist():
     def loop(self):
         while True:
             last = time.time()
-            counts = 0
+            counts = 2
             while time.time() <= last + SoilMoist.sample_cycle:
-                GPIO.wait_for_edge(self.pin, GPIO.FALLING)
-                counts += 1
+                if GPIO.input(self.pin) == 0 and self.flag:
+                    counts += 1
+                    self.flag = False
+                    
+                elif GPIO.input(self.pin) == 1 and not self.flag:
+                    self.flag = True
+                else:
+                    pass
+
             last = time.time()
             self.counts = counts
-            print(self.counts)
     
     def start_loop(self):
         Thread(target=self.loop).start()
@@ -45,15 +52,17 @@ class SoilMoist():
         sensors = cls.sensors
         for sensor in sensors:
             data[sensor.name] = sensor.get_values()
-        print(data)
+        return data
+        
 
     
 if __name__ == '__main__':
-    sensor1 = SoilMoist(5, 'soil1')
-    sensor1 = SoilMoist(25, 'soil2')
-    for i in range(10):
-        time.sleep(1)
-        SoilMoist.get_data()
+    
+    SoilMoist(11, 'soil1')
+    SoilMoist(9, 'soil2')
+    while True:
+        time.sleep(2.5)
+        print(SoilMoist.get_data())
 
 
             

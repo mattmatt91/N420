@@ -1,12 +1,12 @@
 
 from datetime import datetime, timedelta
 from time import sleep, time
+from N420_app.log_data import Preferences
 from log_data import Logger
 
 from sensors import Sensor
 import json as js
 import RPi.GPIO as GPIO
-import json
 GPIO.setmode(GPIO.BCM)
 
 
@@ -16,10 +16,9 @@ class Growbox():
     Sensor()
     data_logger = Logger('data')
     error_logger = Logger('error_growbox')
-    preferences_logger = Logger('preferences')
-    preferences = preferences_logger.get_last()
-    # print(preferences)
-    log_interval = timedelta(minutes=2)
+    preferences_logger = Preferences()
+    preferences = preferences_logger.get_data()
+    log_interval = timedelta(minutes=preferences['log_interval'])
     last_log = datetime.now()-log_interval
 
 
@@ -42,7 +41,7 @@ class Growbox():
     @classmethod
     def safe_preferences(cls):
         print('saving preferences')
-        cls.preferences_logger.write(js.dumps(cls.build_data()))
+        cls.preferences.write(js.dumps(cls.build_data()))
 
     
     @classmethod
@@ -55,7 +54,8 @@ class Growbox():
 
     @classmethod
     def update_sensordata(cls):
-        cls.sensordata =  Sensor.get_data()    
+        cls.sensordata =  Sensor.get_data()
+           
 
     # pins = [18, 23, 24, 17, 27, 22]
     @classmethod
@@ -91,7 +91,6 @@ class Growbox():
                 Pot.update_pots()
                 Fan.update_fans()
                 cls.log_data()
-                sleep(0.5)
             except Exception as e:
                 cls.error_logger.write(repr(e))
                 raise e
@@ -114,9 +113,9 @@ class Growbox():
 class Lamp(Growbox):
 
     lamps = []
-    phase = 'g'
+    phase =  Growbox.preferences['lamp_phase']
     lamp_state = False
-    on_time = timedelta(hours=7) 
+    on_time = timedelta(hours=Growbox.preferences['lamp_ontime']) 
    
     def __init__(self, pin, id, duration, growth_phase='g'):
         super().__init__(pin, id)
@@ -196,10 +195,10 @@ class Pot(Growbox):
     pin_pump = 0
     state_pump= False
     pots = []
-    irrigation_interval = 80 # hours
-    irrigation_duration = 10 # in seconds
-    soil_moist_hyst_min = 10
-    soil_moist_hyst_max = 20
+    irrigation_interval =  Growbox.preferences['irrigation_interval']  # hours
+    irrigation_duration = Growbox.preferences['irrigation_duration']  # in seconds
+    soil_moist_hyst_min =  Growbox.preferences['soil_moist_hyst_min']
+    soil_moist_hyst_max =  Growbox.preferences['soil_moist_hyst_max']
 
     def __init__(self, pin, state, pin_pump, index_soil):
         super().__init__(pin, state)
@@ -284,10 +283,10 @@ class Pot(Growbox):
 class Fan(Growbox):
 
     fans=[]
-    temp_hyst_min = 25
-    temp_hyst_max = 30
-    hum_hyst_min = 50
-    hum_hyst_max = 60
+    temp_hyst_min = Growbox.preferences['temp_hyst_min']
+    temp_hyst_max = Growbox.preferences['temp_hyst_min']
+    hum_hyst_min = Growbox.preferences['hum_hyst_min']
+    hum_hyst_max = Growbox.preferences['hum_hyst_max']
     fans_state = False
    
     def __init__(self, pin, id):

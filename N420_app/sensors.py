@@ -1,35 +1,40 @@
 import numpy as np
 from time import time, sleep
-import bme280
-import soilmoist as sm
+from soilmoist import SoilMoist
+from bmp280 import BMP280
+
 
 class Sensor():
-    my_bme280 = bme280
+    
 
     def __init__(self):
-        pass
+        SoilMoist(11, 'soil1')
+        SoilMoist(9, 'soil2')
+        BMP280(0x76)
+        
 
     @classmethod
     def get_data(cls):
         flag = True
         while flag:
-            try:  
-                    temperature,pressure,humidity = cls.my_bme280.readBME280All()
+            # try:  
                     _sensordata = {}
-                    _sensordata['temp'] = temperature
-                    _sensordata['hum'] =  humidity*100
-                    _sensordata['soil1'] =  round(abs(np.sin(time())),2)
-                    _sensordata['soil2']= round(abs(np.sin(time())),2)
-                    _sensordata['soil3']= round(abs(np.sin(time())),2)
-                    _sensordata['pres'] = pressure
+                    _sensordata['temp'] = round(BMP280.get_temp(),1)
+                    _sensordata['hum'] =  50
+                    _sensordata['pres'] = round(BMP280.get_pres(), 1)
+                    _sensordata['soil1'] =  SoilMoist.get_data()['soil1']
+                    _sensordata['soil2']= SoilMoist.get_data()['soil2']
                     flag = False
-            except:
-                print('waiting for sensor...')
-                sleep(0.1)
+           
+            # except:
+                # print('waiting for sensor...')
+                # sleep(0.1)
                 
         return _sensordata
 
 
 if __name__ == '__main__':
     sensor = Sensor()
-    print(sensor.get_data())
+    while True:
+        sleep(1)
+        print(sensor.get_data())

@@ -7,26 +7,13 @@ import json as js
 class Logger():
     def __init__(self, name):
         self.path =os.path.join("data" ,"logs")
-        Path(self.path).mkdir(parents=True, exist_ok=True)  
-        date = my_time()   
+        Path(self.path).mkdir(parents=True, exist_ok=True)    
         name = f"{name}_log.txt"
         self.path = os.path.join(self.path, name)
-        # with open(self.path, 'a+') as f:
-            # f.write('server restarted\n')
-            # print(f.readlines())
-
+        with open(self.path, 'a') as f:
+            pass
         print(self.path)
 
-    def get_last(self):
-        try:
-            f = open(self.path)
-            preferences = f.readlines()[-1]
-            print(preferences)
-            # f.close()
-            # return js.loads(preferences[preferences.find('{'):])
-        except:
-            print(f"no file found at\033[1;33;40m {self.path}\033[0;37;40m")
-            return None
 
     def get_path(self):
         return self.path
@@ -36,10 +23,38 @@ class Logger():
         with open(self.path, 'a') as f:
             f.write(new_line)
 
+class Preferences():
+    def __init__(self):
+            self.path =os.path.join("data" ,"logs")
+            Path(self.path).mkdir(parents=True, exist_ok=True)  
+            self.path =os.path.join(self.path, "preferemces.json")
+            with open(self.path) as json_file:
+                self.data = js.load(json_file)
+
+
+    def get_data(self):
+
+            return self.data
+
+    def write(self, data):
+        for i in data:
+            print(i, data[i])
+            self.data[i] = data[i]
+        with open(self.path, 'w') as outfile:
+            js.dump(self.data, outfile)
+
 
 
 if __name__ == '__main__':
+    preferences = Preferences()
+    data = {'2':2}
+    print(preferences.get_data())
+    preferences.write(data)
+    print(preferences.get_data())
+    exit()
+
     logger_data = Logger('data')
+    print(logger_data.get_last())
     logger_error = Logger('error')
 
     for i in range(100):

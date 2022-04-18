@@ -34,7 +34,7 @@ class Cam(BaseCamera):
     def frames():
         with picamera.PiCamera() as camera:
             camera.resolution = (Cam.cam_res[1],Cam.cam_res[0])
-            camera.rotation = 90
+            camera.rotation = 270
             # let camera warm up
             sleep(2)
 
