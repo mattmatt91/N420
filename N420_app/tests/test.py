@@ -1,6 +1,9 @@
-mylist = []
 
-for i in range(30):
-    mylist.insert(0,i)
-    mylist = mylist[:10]
-print(mylist)
+
+offset_dry = 550
+offset_moist = 200
+
+
+counts = 200
+
+print((offset_dry -(counts-offset_moist))//3)

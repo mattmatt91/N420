@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta
 from time import sleep, time
 from log_data import Logger,Preferences
-
+from gpiozero import CPUTemperature
 from sensors import Sensor
 import json as js
 import RPi.GPIO as GPIO
@@ -13,6 +13,7 @@ GPIO.setmode(GPIO.BCM)
 class Growbox():
     actuators = []
     Sensor()
+    cpu = CPUTemperature()
     data_logger = Logger('data')
     error_logger = Logger('error_growbox')
     preferences_logger = Preferences()
@@ -100,6 +101,7 @@ class Growbox():
         _data = {}
         _data['time'] = datetime.now().strftime("%H:%M:%S")
         _data['date'] = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+        _data['cpu_temp'] = cls.cpu.temperature
         _data = _data | Growbox.sensordata
         _data = _data | Lamp.get_data()
         _data = _data | Pot.get_data()

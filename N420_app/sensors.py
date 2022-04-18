@@ -22,8 +22,8 @@ class Sensor():
                     _sensordata['temp'] = round(BMP280.get_temp(),1)
                     _sensordata['hum'] =  50
                     _sensordata['pres'] = round(BMP280.get_pres(), 1)
-                    _sensordata['soil1'] =  SoilMoist.get_data()['soil1']
-                    _sensordata['soil2']= SoilMoist.get_data()['soil2']
+                    _sensordata['soil1'] =  SoilMoist.get_data_mapped()['soil1']
+                    _sensordata['soil2']= SoilMoist.get_data_mapped()['soil2']
                     flag = False
            
             # except:

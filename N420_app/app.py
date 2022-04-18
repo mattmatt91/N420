@@ -123,6 +123,7 @@ def preferences():
 def get_data(options):
     # print(options)
     with open(Growbox.path_data(), 'r') as f:
+            print(options)
             data =[js.loads(i[i.find('{'): i.rfind('}')+1]) for i in f.readlines()]
             df = pd.DataFrame(data)
             lengthPlot = int(options.pop('days'))  

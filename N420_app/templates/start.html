@@ -34,6 +34,10 @@
                      <label class="form-check-label" for="pres">PRES. [mPa]: </label>
                      <span id="pres"></span>
                   </div>
+                  <div class="col">
+                     <label class="form-check-label" for="cpu_temp">CPU [°C]: </label>
+                     <span id="cpu_temp"></span>
+                  </div>
                </div>
             </div>
          </div>
@@ -98,10 +102,10 @@
 
 
 <script>
-   let labels_ = ["time", "temp", "hum", "soil1", "soil2", "soil3", "pres", "lamp_phase", "lamp_state", "lamp_ontime", "lamp_g_state", "lamp_g_duration", "lamp_g_phase", "lamp_f_state", "lamp_f_duration", "lamp_f_phase", "state_pump", "irrigation_interval", "irrigation_duration", "soil_moist_hyst_min", "soil_moist_hyst_max", "pot1_state", "pot1_dry", "pot1_soil_moist", "pot2_state", "pot2_dry", "pot2_soil_moist", "pot3_state", "pot3_dry", "pot3_soil_moist", "temp_hyst_min", "temp_hyst_max", "hum_hyst_min", "hum_hyst_max", "state", "fan_state"]
-   let labels = ['#time', '#temp', '#hum', '#pres', '#phase', '#lamp',
+   let labels_ = ["cpu temp","time", "temp", "hum", "soil1", "soil2", "soil3", "pres", "lamp_phase", "lamp_state", "lamp_ontime", "lamp_g_state", "lamp_g_duration", "lamp_g_phase", "lamp_f_state", "lamp_f_duration", "lamp_f_phase", "state_pump", "irrigation_interval", "irrigation_duration", "soil_moist_hyst_min", "soil_moist_hyst_max", "pot1_state", "pot1_dry", "pot1_soil_moist", "pot2_state", "pot2_dry", "pot2_soil_moist", "pot3_state", "pot3_dry", "pot3_soil_moist", "temp_hyst_min", "temp_hyst_max", "hum_hyst_min", "hum_hyst_max", "state", "fan_state"]
+   let labels = ['#cpu_temp','#time', '#temp', '#hum', '#pres', '#phase', '#lamp',
       '#fan', '#soilmoist1', '#soilmoist2', '#soilmoist3'];
-   let label_routes = [['time'], ['temp'], ['hum'], ['pres'],
+   let label_routes = [['cpu_temp'], ['time'], ['temp'], ['hum'], ['pres'],
    ['lamp_phase'], ['lamp_state'], ['fan_state'], ['soil1'], ['soil2'], ['soil3']];
    let my_data;
 
