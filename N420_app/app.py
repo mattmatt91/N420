@@ -8,6 +8,7 @@ from threading import Thread
 import numpy as np
 from picamera import PiCamera
 from my_user import Users
+from plot import Plot
 
 ###################################################################
 # LOGIN 
@@ -32,7 +33,6 @@ for user in Users.users:
 
 app = Flask(__name__)
 app.secret_key = Users.secret_key
-
 Growbox.init_actuators()
 
 ###########################################################################################
@@ -120,32 +120,6 @@ def preferences():
   
 ########################################################################
 
-def get_data(options):
-    # print(options)
-    with open(Growbox.path_data(), 'r') as f:
-            print(options)
-            data =[js.loads(i[i.find('{'): i.rfind('}')+1]) for i in f.readlines()]
-            df = pd.DataFrame(data)
-            lengthPlot = int(options.pop('days'))  
-            lengthData = len(df.index)   
-            index = lengthData-lengthPlot
-            index = lengthData-lengthPlot
-            thisData = df.iloc[index:][[i for i in options]]  
-            try:
-                max = thisData.select_dtypes(include=[np.number]).to_numpy().max()
-                min = thisData.select_dtypes(include=[np.number]).to_numpy().min()
-            except:
-                max = 1
-                min = 0
-            for option in options:
-                if thisData[option].iloc[0] == True or thisData[option].iloc[0] == False:
-                    values = [max if i == True else min for i in thisData[option]]                
-                    thisData[option] = values
-            thisData['time'] = df['time'][index:]  
-            thisData = thisData.reset_index().to_json(orient='records')     
-
-            print(thisData)
-            return(thisData)
 
 ##################################################################
 @app.route('/plots/options',methods=["GET", "POST"])
@@ -153,9 +127,9 @@ def plots_options():
     if not g.user:
         return redirect(url_for('login')) 
     options = dict(request.form)
-    data = get_data(options)
-    # print(data)
-    return data
+    print(options)
+    this_plot = Plot.get_plot(options)
+    return this_plot
 
 
 @app.route('/plots')

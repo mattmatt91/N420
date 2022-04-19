@@ -20,9 +20,9 @@ class SoilMoist():
     def __init__(self, pin, name):
         GPIO.setup(pin, GPIO.IN,GPIO.PUD_UP)
         self.pin = pin
-        self.offset_dry = 500
-        self.offset_moist = 100
-        self.offset_delta = 4
+        self.offset_dry = 510
+        self.offset_moist = 10
+        self.offset_delta = 5
         self.name = name
         self.flag = False
         self.last_values = [0]

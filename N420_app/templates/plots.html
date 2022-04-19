@@ -21,10 +21,6 @@
                             <label class="form-check-label" for="cbTemp">TEMP.</label>
                         </div>
                         <div class="col">
-                            <input class="form-check-input" type="checkbox" name="hum" id="cbHum" checked>
-                            <label class="form-check-label" for="cbHum">HUM.</label>
-                        </div>
-                        <div class="col">
                             <input class="form-check-input" type="checkbox" name="pres" id="cbpres">
                             <label class="form-check-label" for="cbpres">PRES.</label>
                         </div>
@@ -69,16 +65,17 @@
 
 
 
-        <div id="curve_chart"></div>
-        
-      
+        <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+
+
     </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <script type="text/javascript">
-   
+
     let myArray = [];
     $(document).ready(function () {
         $('form').on('submit', function (event) {
@@ -101,29 +98,30 @@
                 success: function (response) {
                     console.log(response)
                     let myData = response;
-                    let myArray = [];
-                    //console.log(myData)
                     
-                    delete myData[0]['index'];
-                    var keys = Object.keys(myData[0]);
-                    var index = keys.indexOf("time");
-                    const element = keys.splice(index, 1)[0];     
-                    // console.log(keys)
-                    keys.splice(0, 0, element);             
+                    var keys = Object.keys(myData)
+                    console.log(keys)
+                    var xValues = Object.values(myData['date']);
 
-                    myArray.push(keys)
-
-                    myData.forEach(function (row) {
-                        delete row.index;
-                        let values = Object.values(row)
-                        const value = values.splice(index, 1)[0];     
-                        values.splice(0, 0, value); 
-
-                        myArray.push(values)
+                    var secs = 30;
+                    new Date(secs * 1000);
+                    
+                    console.log(xValues)
+                    new Chart("myChart", {
+                        type: "line",
+                        data: {
+                            labels: xValues,
+                            datasets: [{
+                                data: Object.values(myData[keys[0]]),
+                                borderColor: "red",
+                                fill: false
+                            }]
+                        },
+                        options: {
+                            legend: { display: true }
+                        }
                     });
-                    
-                    google.charts.load('current', { 'packages': ['corechart'] });
-                    google.charts.setOnLoadCallback(drawChart(myArray));
+
                 },
                 dataType: "json"
             })
@@ -134,29 +132,13 @@
 
 
 
-
-
-
     //updata range label
     function update_value_label(label, value) {
         document.querySelector(label).value = value;
     }
-    
+
     //plot
-    
-    
-    function drawChart(array) {
 
-        var data = google.visualization.arrayToDataTable(array);
 
-        var options = {
-            curveType: 'function',
-            legend: { position: 'bottom' }
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-        chart.draw(data, options);
-    }
 </script>
 {% endblock %}
