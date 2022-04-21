@@ -1,9 +1,13 @@
 
-
-offset_dry = 550
-offset_moist = 200
+from datetime import datetime
 
 
-counts = 200
+from datetime import datetime, timedelta
+stringIn = '2022-04-18 13:06:03'
 
-print((offset_dry -(counts-offset_moist))//3)
+dt = datetime.strptime(stringIn, '%Y-%m-%d %H:%M:%S')
+print(type(stringIn))
+print(type(dt))
+ts = dt.timestamp()
+print(ts)
+print(datetime.fromtimestamp(ts).strftime("%A, %B %d, %Y %I:%M:%S"))

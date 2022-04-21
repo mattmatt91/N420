@@ -1,4 +1,5 @@
 
+
 from flask import Flask, g, redirect, render_template, request, session, url_for, Response, jsonify
 from cam import Cam
 import pandas as pd
@@ -167,5 +168,5 @@ if __name__ == "__main__":
 
     Thread(target=Growbox.main_loop).start()
     Cam.save_img_loop()
-    app.run(host='0.0.0.0', port=8090, debug=False)
+    app.run(host='0.0.0.0', port=8090)
        
