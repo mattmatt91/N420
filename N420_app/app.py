@@ -44,6 +44,8 @@ def before_request():
     if 'user_id' in session:
         user = [x for x in users if x.id == session['user_id']][0]
         g.user = user
+        
+        
 
 username = ''
 password = ''
@@ -57,6 +59,7 @@ def login():
         password = request.form['password']
         
         user = [x for x in users if x.username == username][0]
+        
         if user and user.password == password:
             session['user_id'] = user.id
             return redirect(url_for('video'))
