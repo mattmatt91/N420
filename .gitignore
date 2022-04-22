@@ -1,6 +1,7 @@
 # Build and Release Folders
 *.png
 *.jpg
+*.avi
 my_user.py
 data/
 

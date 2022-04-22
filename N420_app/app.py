@@ -62,10 +62,10 @@ def login():
         
         if user and user.password == password:
             session['user_id'] = user.id
+            print(session['username'])
             return redirect(url_for('video'))
 
         return redirect(url_for('login'))
-
     return render_template('login.html')
 
 @app.route('/logout')
