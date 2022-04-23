@@ -10,19 +10,30 @@ class BME680():
 
     @classmethod
     def get_temp(cls):
-        return cls.bme680.temperature
-
+        try:
+            return cls.bme680.temperature
+        except:
+            return 0
     @classmethod
     def get_pres(cls):
-        return cls.bme680.pressure
+        try:
+            return cls.bme680.pressure
+        except:
+            return 0
 
     @classmethod
     def get_hum(cls):
-        return cls.bme680.humidity
+        try:
+            return cls.bme680.humidity
+        except:
+            return 0
 
     @classmethod
     def get_gas(cls):
-        return cls.bme680.gas
+        try:
+            return cls.bme680.gas
+        except:
+            return 0
 
 
 if __name__ == '__main__':

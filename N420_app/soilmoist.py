@@ -6,11 +6,6 @@ from threading import Thread
 
 
 class SoilMoist():
-    # raw values:
-    # air : 2000 - 3500
-    # dry = 350 - 500
-    # moist = 200
-
 
     GPIO.setmode(GPIO.BCM)
     sample_cycle = 1
@@ -20,12 +15,9 @@ class SoilMoist():
     def __init__(self, pin, name):
         GPIO.setup(pin, GPIO.IN,GPIO.PUD_UP)
         self.pin = pin
-        self.offset_dry = 510
-        self.offset_moist = 10
-        self.offset_delta = 5
+        self.max_counts = 1000
         self.name = name
         self.flag = False
-        self.last_values = [0]
         self.last_values_raw = [0]
         SoilMoist.sensors.append(self)
 
@@ -45,22 +37,15 @@ class SoilMoist():
                     self.flag = True
                 else:
                     pass
+                if counts > self.max_counts:
+                    self.max_counts = counts
+                    print(f'increasing max counts for {self.name}')
             self.last_values_raw.insert(0, counts)
-            self.last_values_raw = self.last_values_raw[:10]
+            self.last_values_raw = self.last_values_raw[0:10]
             last = time.time()
 
     def get_values_mapped(self):
-        mapped_value = np.mean(self.last_values_raw)
-        if mapped_value > self.offset_dry or mapped_value < self.offset_moist:
-            if mapped_value == 0:
-                mapped_value = 100
-            else:
-                print('measurement out of range: ', mapped_value)
-            mapped_value = 100
-        elif mapped_value <  self.offset_dry and mapped_value >self.offset_moist:
-            mapped_value = 100-((mapped_value - self.offset_moist)/self.offset_delta)
-        else:
-            print('error while measuring: ', mapped_value)
+        mapped_value = (1-(np.mean(self.last_values_raw)/self.max_counts))*100
         return round(mapped_value,0)
             
     def start_loop(self):
@@ -70,6 +55,7 @@ class SoilMoist():
     def get_values_raw(self):
         return round(np.mean(self.last_values_raw),0)
 
+    
     @classmethod
     def get_data_mapped(cls):
         data = {}
@@ -83,6 +69,7 @@ class SoilMoist():
         for sensor in cls.sensors:
             data[sensor.name] = sensor.get_values_raw()
         return data
+    
         
 
     
@@ -91,9 +78,12 @@ if __name__ == '__main__':
     SoilMoist(11, 'soil1')
     SoilMoist(9, 'soil2')
     while True:
-        time.sleep(2.5)
-        print(SoilMoist.get_data_mapped())
-        print(SoilMoist.get_data_raw())
+        time.sleep(1)
+        # print('#'*(int(SoilMoist.get_data_mapped()['soil1']/4)), SoilMoist.get_data_mapped()['soil1'])
+        print('mapped: ',SoilMoist.get_data_mapped())
+        print('raw; ',SoilMoist.get_data_raw())
+
+        print()
 
 
             

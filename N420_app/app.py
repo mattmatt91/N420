@@ -47,6 +47,12 @@ def before_request():
         
         
 
+def check_if_logged_in(func):
+    if not g.user:
+        return redirect(url_for('login'))
+    return function()
+
+
 username = ''
 password = ''
 
@@ -62,7 +68,7 @@ def login():
         
         if user and user.password == password:
             session['user_id'] = user.id
-            print(session['username'])
+            # print(session['username'])
             return redirect(url_for('video'))
 
         return redirect(url_for('login'))
